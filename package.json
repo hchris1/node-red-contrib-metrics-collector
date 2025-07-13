@@ -1,0 +1,21 @@
+{
+  "name": "node-red-flow-metrics",
+  "version": "1.0.0",
+  "description": "Comprehensive Node-RED flow and node monitoring with Prometheus metrics",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["node-red", "metrics", "monitoring", "prometheus", "observability"],
+  "author": "Node-RED Flow Metrics",
+  "license": "MIT",
+  "dependencies": {
+    "prom-client": "15.1.3",
+    "express": "5.1.0"
+  },
+  "node-red": {
+    "nodes": {
+      "flow-metrics": "nodes/metrics-node.js"
+    }
+  }
+} 

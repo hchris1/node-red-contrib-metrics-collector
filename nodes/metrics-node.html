@@ -1,0 +1,112 @@
+<script type="text/javascript">
+    RED.nodes.registerType('flow-metrics', {
+        category: 'monitoring',
+        color: '#87CEEB',
+        defaults: {
+            name: {value: ""},
+            host: {value: "0.0.0.0"},
+            port: {value: 1881, validate: RED.validators.number()},
+            metricsRoute: {value: "/metrics"},
+            jsonRoute: {value: "/metrics/json"},
+            healthRoute: {value: "/health"},
+            collectionInterval: {value: 5000, validate: RED.validators.number()},
+            enableDetailedLogging: {value: false},
+            maxTimingEntries: {value: 1000, validate: RED.validators.number()}
+        },
+        inputs: 0,
+        outputs: 0,
+        icon: "font-awesome/fa-bar-chart",
+        label: function() {
+            return this.name || `metrics (${this.host}:${this.port})`;
+        },
+        labelStyle: function() {
+            return this.name ? "node_label_italic" : "";
+        },
+        oneditprepare: function() {
+            $("#node-input-name").val(this.name);
+            $("#node-input-host").val(this.host);
+            $("#node-input-port").val(this.port);
+            $("#node-input-metricsRoute").val(this.metricsRoute);
+            $("#node-input-jsonRoute").val(this.jsonRoute);
+            $("#node-input-healthRoute").val(this.healthRoute);
+            $("#node-input-collectionInterval").val(this.collectionInterval);
+            $("#node-input-enableDetailedLogging").prop('checked', this.enableDetailedLogging);
+            $("#node-input-maxTimingEntries").val(this.maxTimingEntries);
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="flow-metrics">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    
+    <div class="form-row">
+        <label for="node-input-host"><i class="fa fa-server"></i> Host</label>
+        <input type="text" id="node-input-host" placeholder="0.0.0.0">
+    </div>
+    
+    <div class="form-row">
+        <label for="node-input-port"><i class="fa fa-plug"></i> Port</label>
+        <input type="number" id="node-input-port" placeholder="1881" min="1" max="65535">
+    </div>
+    
+    <div class="form-row">
+        <label for="node-input-metricsRoute"><i class="fa fa-route"></i> Metrics Route</label>
+        <input type="text" id="node-input-metricsRoute" placeholder="/metrics">
+    </div>
+    
+    <div class="form-row">
+        <label for="node-input-jsonRoute"><i class="fa fa-code"></i> JSON Route</label>
+        <input type="text" id="node-input-jsonRoute" placeholder="/metrics/json">
+    </div>
+    
+    <div class="form-row">
+        <label for="node-input-healthRoute"><i class="fa fa-heartbeat"></i> Health Route</label>
+        <input type="text" id="node-input-healthRoute" placeholder="/health">
+    </div>
+    
+    <div class="form-row">
+        <label for="node-input-collectionInterval"><i class="fa fa-clock-o"></i> Collection Interval (ms)</label>
+        <input type="number" id="node-input-collectionInterval" placeholder="5000" min="1000" max="60000">
+    </div>
+    
+    <div class="form-row">
+        <label for="node-input-maxTimingEntries"><i class="fa fa-database"></i> Max Timing Entries</label>
+        <input type="number" id="node-input-maxTimingEntries" placeholder="1000" min="100" max="10000">
+    </div>
+    
+    <div class="form-row">
+        <label for="node-input-enableDetailedLogging"><i class="fa fa-list-alt"></i> Enable Detailed Logging</label>
+        <input type="checkbox" id="node-input-enableDetailedLogging" style="display: inline-block; width: auto; vertical-align: top;">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="flow-metrics">
+    <p>A comprehensive Node-RED flow and node monitoring node.</p>
+    <p>This node automatically tracks and measures:</p>
+    <ul>
+        <li><strong>Message Flow:</strong> Counts messages passing through nodes</li>
+        <li><strong>Execution Time:</strong> Measures how long nodes take to process messages</li>
+        <li><strong>Error Tracking:</strong> Monitors and counts node errors</li>
+        <li><strong>Flow Status:</strong> Tracks active flows and node counts</li>
+        <li><strong>Resource Usage:</strong> Monitors memory and system metrics</li>
+    </ul>
+    
+    <h3>Configuration Options</h3>
+    <ul>
+        <li><strong>Host:</strong> Server host (default: 0.0.0.0 for Docker compatibility)</li>
+        <li><strong>Port:</strong> Server port (default: 1881)</li>
+        <li><strong>Metrics Route:</strong> Prometheus metrics endpoint (default: /metrics)</li>
+        <li><strong>JSON Route:</strong> JSON metrics endpoint (default: /metrics/json)</li>
+        <li><strong>Health Route:</strong> Health check endpoint (default: /health)</li>
+        <li><strong>Collection Interval:</strong> How often to collect metrics (default: 5000ms)</li>
+        <li><strong>Max Timing Entries:</strong> Maximum timing entries to keep in memory (default: 1000)</li>
+        <li><strong>Detailed Logging:</strong> Enable verbose console logging</li>
+    </ul>
+    
+    <p>Metrics are exposed at <code>http://[host]:[port][metricsRoute]</code> in Prometheus format.</p>
+    <p><strong>Performance:</strong> This node is optimized for minimal impact on Node-RED performance.</p>
+    <p>Deploy only one instance of this node per Node-RED flow to avoid duplicate monitoring.</p>
+</script> 
