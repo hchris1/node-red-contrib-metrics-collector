@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16, 18, 20]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run security audit
+        run: npm audit --audit-level=high
+
+      - name: Check syntax
+        run: |
+          node -c index.js
+          node -c nodes/metrics-node.js
+          node -c lib/metrics-collector.js
+          node -c lib/node-red-hooks.js
+          node -c lib/prometheus-exporter.js
+
+      - name: Test package structure
+        run: npm pack --dry-run
+
+      - name: Validate package.json
+        run: npm ls
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check for potential issues
+        run: |
+          # Check for common JavaScript issues
+          grep -r "console.log" --include="*.js" lib/ || echo "No console.log found in lib/"
+          
+          # Check for hardcoded values that might need configuration
+          grep -r "localhost" --include="*.js" . || echo "No localhost references found"
+          
+          # Verify all files have proper Node.js shebang or module structure
+          find . -name "*.js" -not -path "./node_modules/*" -exec node -c {} \;
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit
+        run: npm audit --audit-level=moderate
+
+      - name: Check for sensitive files
+        run: |
+          # Check for accidentally committed sensitive files
+          find . -name "*.key" -o -name "*.pem" -o -name "*.env" | grep -v node_modules || echo "No sensitive files found"
+          
+          # Check for potential secrets in code
+          grep -r "password\|secret\|token" --include="*.js" . | grep -v node_modules || echo "No obvious secrets found"

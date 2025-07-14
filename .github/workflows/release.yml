@@ -1,0 +1,142 @@
+name: Release to NPM
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., patch, minor, major)'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  quality-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run security audit
+        run: npm audit --audit-level=high
+
+      - name: Check syntax
+        run: |
+          node -c index.js
+          node -c nodes/metrics-node.js
+          node -c lib/metrics-collector.js
+          node -c lib/node-red-hooks.js
+          node -c lib/prometheus-exporter.js
+
+      - name: Test package structure
+        run: npm pack --dry-run
+
+      - name: Validate package.json
+        run: npm ls
+
+  release:
+    needs: quality-checks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Bump version and create tag
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          npm version ${{ github.event.inputs.version }} --no-git-tag-version
+          VERSION=$(node -p "require('./package.json').version")
+          git add package.json package-lock.json
+          git commit -m "chore: bump version to v$VERSION"
+          git tag "v$VERSION"
+          git push origin main --tags
+
+      - name: Extract version from tag
+        if: github.event_name == 'push'
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Extract version from package.json
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ env.VERSION }}
+          release_name: Release v${{ env.VERSION }}
+          body: |
+            ## Changes in v${{ env.VERSION }}
+            
+            - Universal node support - works with any Node-RED node type
+            - Improved metrics collection performance
+            - Better error handling and logging
+            
+            ## Installation
+            ```bash
+            npm install node-red-contrib-metrics-collector
+            ```
+            
+            ## What's New
+            - ✅ Universal compatibility with all Node-RED nodes
+            - ✅ No more hardcoded node type restrictions
+            - ✅ Better monitoring coverage for custom nodes
+            
+            See the [README](https://github.com/hchris1/node-red-contrib-metrics-collector#readme) for full documentation.
+          draft: false
+          prerelease: false
+
+      - name: Publish to NPM
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Update package-lock.json
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          git add package-lock.json
+          git commit -m "chore: update package-lock.json after publish" || exit 0
+          git push origin main
