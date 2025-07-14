@@ -1,0 +1,91 @@
+[
+    {
+        "id": "basic-flow",
+        "type": "tab",
+        "label": "Basic Metrics Example",
+        "disabled": false,
+        "info": "A simple flow demonstrating the metrics collector node in action"
+    },
+    {
+        "id": "metrics-node",
+        "type": "flow-metrics",
+        "z": "basic-flow",
+        "name": "Flow Metrics",
+        "host": "0.0.0.0",
+        "port": 1881,
+        "metricsRoute": "/metrics",
+        "jsonRoute": "/metrics/json",
+        "healthRoute": "/health",
+        "collectionInterval": 5000,
+        "enableDetailedLogging": false,
+        "maxTimingEntries": 1000,
+        "x": 120,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "inject-node",
+        "type": "inject",
+        "z": "basic-flow",
+        "name": "Test Message",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "2",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "test",
+        "payload": "Hello World",
+        "payloadType": "str",
+        "x": 130,
+        "y": 160,
+        "wires": [
+            [
+                "function-node"
+            ]
+        ]
+    },
+    {
+        "id": "function-node",
+        "type": "function",
+        "z": "basic-flow",
+        "name": "Process Message",
+        "func": "// Simple message processing\nmsg.payload = msg.payload + ' - processed at ' + new Date().toISOString();\nmsg.count = (msg.count || 0) + 1;\n\n// Simulate some processing time\nconst delay = Math.random() * 100;\nsetTimeout(() => {\n    node.send(msg);\n}, delay);",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 160,
+        "wires": [
+            [
+                "debug-node"
+            ]
+        ]
+    },
+    {
+        "id": "debug-node",
+        "type": "debug",
+        "z": "basic-flow",
+        "name": "Output",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 540,
+        "y": 160,
+        "wires": []
+    }
+]

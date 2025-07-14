@@ -1,21 +1,51 @@
 {
-  "name": "node-red-flow-metrics",
+  "name": "node-red-contrib-metrics-collector",
   "version": "1.0.0",
-  "description": "Comprehensive Node-RED flow and node monitoring with Prometheus metrics",
+  "description": "Flow and node monitoring with Prometheus metrics export",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["node-red", "metrics", "monitoring", "prometheus", "observability"],
-  "author": "Node-RED Flow Metrics",
+  "keywords": [
+    "node-red",
+    "metrics",
+    "monitoring",
+    "prometheus",
+    "observability",
+    "telemetry",
+    "performance",
+    "dashboard",
+    "analytics"
+  ],
+  "author": "Christian Horn",
   "license": "MIT",
-  "dependencies": {
-    "prom-client": "15.1.3",
-    "express": "5.1.0"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hchris1/node-red-contrib-metrics-collector.git"
+  },
+  "homepage": "https://github.com/hchris1/node-red-contrib-metrics-collector#readme",
+  "bugs": {
+    "url": "https://github.com/hchris1/node-red-contrib-metrics-collector/issues"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   },
   "node-red": {
+    "version": ">=2.0.0",
     "nodes": {
       "flow-metrics": "nodes/metrics-node.js"
     }
-  }
+  },
+  "dependencies": {
+    "prom-client": "^15.1.3",
+    "express": "^5.1.0"
+  },
+  "files": [
+    "index.js",
+    "nodes/",
+    "lib/",
+    "examples/",
+    "README.md",
+    "LICENSE"
+  ]
 } 
