@@ -2,6 +2,8 @@
 
 A monitoring integration that provides detailed metrics about your flows, nodes, and system performance. Export metrics in Prometheus format for integration with monitoring dashboards like Grafana.
 
+![Metrics Dashboard](https://raw.githubusercontent.com/hchris1/node-red-contrib-metrics-collector/cb5df2d64c724625aaff8dca8cb3893e68295ea7/docs/dashboard.png)
+
 ## Features
 
 - **Flow Monitoring**: Track active flows, total flows, and flow status
