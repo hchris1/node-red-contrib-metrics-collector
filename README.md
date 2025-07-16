@@ -5,7 +5,7 @@ A monitoring integration that provides detailed metrics about your flows, nodes,
 ## Features
 
 - **Flow Monitoring**: Track active flows, total flows, and flow status
-- **Node Metrics**: Monitor message processing, execution times, and error rates per node
+- **Node Metrics**: Monitor incoming/outgoing message rates, execution times, and error rates per node
 - **System Metrics**: CPU, memory, and Node.js process metrics
 - **Prometheus Export**: Industry-standard metrics format for monitoring systems
 - **JSON API**: Human-readable metrics endpoint
