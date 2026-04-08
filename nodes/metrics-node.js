@@ -54,8 +54,6 @@ module.exports = function (RED) {
                     console.log('⚠️ RED.events not available for message tracking');
                 }
 
-                node.hookExistingNodes();
-
             } catch (error) {
                 console.log('❌ Error setting up message tracking:', error.message);
             }
@@ -119,7 +117,6 @@ module.exports = function (RED) {
 
             globalMetrics.init(RED).then(() => {
                 console.log('✅ Metrics system initialized');
-                isServerRunning = true;
                 node.setupMessageTracking();
             }).catch(error => {
                 console.error('❌ Failed to initialize metrics:', error);
@@ -152,7 +149,6 @@ module.exports = function (RED) {
             console.log('🛑 Shutting down metrics on runtime stop');
             globalMetrics.stop();
             globalMetrics = null;
-            isServerRunning = false;
         }
     });
 }; 

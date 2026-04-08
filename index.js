@@ -126,9 +126,9 @@ class NodeRedFlowMetrics {
         return this.metricsCollector.getRegistry();
     }
 
-    recordCustomMetric(nodeId, nodeType, flowId, metricType, value) {
+    recordError(nodeId, nodeType, flowId, errorType, nodeName = '', flowName = '') {
         if (this.isInitialized && this.metricsCollector) {
-            this.metricsCollector.recordCustomMetric(nodeId, nodeType, flowId, metricType, value);
+            this.metricsCollector.recordError(nodeId, nodeType, flowId, errorType, nodeName, flowName);
         }
     }
 

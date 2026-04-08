@@ -329,6 +329,102 @@
       "fieldConfig": {
         "defaults": {
           "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 10
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
+      "id": 20,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "expr": "increase(nodered_flow_errors_total{flow_id=~\"$flow\"}[5m])",
+          "interval": "",
+          "legendFormat": "{{flow_name}} ({{flow_id}})",
+          "refId": "A"
+        }
+      ],
+      "title": "Errors per Workflow (5m)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
             "mode": "thresholds"
           },
           "mappings": [],
@@ -357,7 +453,7 @@
         "h": 3,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 11
       },
       "id": 14,
       "options": {
@@ -388,7 +484,7 @@
           },
           "expr": "topk(3, (rate(nodered_node_execution_time_seconds_sum{flow_id=~\"$flow\",node_type=~\"$node_type\"}[5m]) / rate(nodered_node_execution_time_seconds_count{flow_id=~\"$flow\",node_type=~\"$node_type\"}[5m])) * 1000)",
           "interval": "",
-          "legendFormat": "{{node_id}} ({{node_type}})",
+          "legendFormat": "{{flow_name}} / {{node_name}} [{{node_type}}] ({{node_id}})",
           "refId": "A"
         }
       ],
@@ -481,7 +577,7 @@
           },
           "expr": "increase(nodered_errors_total{flow_id=~\"$flow\",node_type=~\"$node_type\"}[5m])",
           "interval": "",
-          "legendFormat": "{{node_id}} ({{node_type}})",
+          "legendFormat": "{{flow_name}} / {{node_name}} [{{node_type}}] ({{node_id}})",
           "refId": "A"
         }
       ],
@@ -586,7 +682,7 @@
           },
           "expr": "nodered_messages_incoming_per_second{flow_id=~\"$flow\",node_type=~\"$node_type\"}",
           "interval": "",
-          "legendFormat": "{{node_id}} ({{node_type}}) - Incoming",
+          "legendFormat": "{{flow_name}} / {{node_name}} [{{node_type}}] ({{node_id}}) - Incoming",
           "refId": "A"
         }
       ],
@@ -678,7 +774,7 @@
           },
           "expr": "nodered_messages_outgoing_per_second{flow_id=~\"$flow\",node_type=~\"$node_type\"}",
           "interval": "",
-          "legendFormat": "{{node_id}} ({{node_type}}) - Outgoing",
+          "legendFormat": "{{flow_name}} / {{node_name}} [{{node_type}}] ({{node_id}}) - Outgoing",
           "refId": "A"
         }
       ],
@@ -776,7 +872,7 @@
           },
           "expr": "(rate(nodered_node_execution_time_seconds_sum{flow_id=~\"$flow\",node_type=~\"$node_type\"}[5m]) / rate(nodered_node_execution_time_seconds_count{flow_id=~\"$flow\",node_type=~\"$node_type\"}[5m])) * 1000",
           "interval": "",
-          "legendFormat": "{{node_id}} ({{node_type}}) - Average",
+          "legendFormat": "{{flow_name}} / {{node_name}} [{{node_type}}] ({{node_id}}) - Avg",
           "refId": "A"
         }
       ],
