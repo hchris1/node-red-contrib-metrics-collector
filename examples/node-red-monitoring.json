@@ -343,7 +343,7 @@
               "tooltip": false,
               "vis": false
             },
-            "lineInterpolation": "linear",
+            "lineInterpolation": "stepAfter",
             "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
@@ -408,13 +408,13 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
-          "expr": "increase(nodered_flow_errors_total{flow_id=~\"$flow\"}[5m])",
+          "expr": "nodered_flow_errors_total{flow_id=~\"$flow\"}",
           "interval": "",
-          "legendFormat": "{{flow_name}} ({{flow_id}})",
+          "legendFormat": "{{flow_id}}",
           "refId": "A"
         }
       ],
-      "title": "Errors per Workflow (5m)",
+      "title": "Errors per Workflow",
       "type": "timeseries"
     },
     {
@@ -484,7 +484,7 @@
           },
           "expr": "topk(3, (rate(nodered_node_execution_time_seconds_sum{flow_id=~\"$flow\",node_type=~\"$node_type\"}[5m]) / rate(nodered_node_execution_time_seconds_count{flow_id=~\"$flow\",node_type=~\"$node_type\"}[5m])) * 1000)",
           "interval": "",
-          "legendFormat": "{{flow_name}} / {{node_name}} [{{node_type}}] ({{node_id}})",
+          "legendFormat": "{{node_name}} [{{node_type}}] ({{node_id}})",
           "refId": "A"
         }
       ],
@@ -514,7 +514,7 @@
               "tooltip": false,
               "vis": false
             },
-            "lineInterpolation": "linear",
+            "lineInterpolation": "stepAfter",
             "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
@@ -575,13 +575,13 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
-          "expr": "increase(nodered_errors_total{flow_id=~\"$flow\",node_type=~\"$node_type\"}[5m])",
+          "expr": "sum by (node_id, node_name, node_type, flow_id) (nodered_errors_total{flow_id=~\"$flow\",node_type=~\"$node_type\"})",
           "interval": "",
-          "legendFormat": "{{flow_name}} / {{node_name}} [{{node_type}}] ({{node_id}})",
+          "legendFormat": "{{node_name}} [{{node_type}}] ({{node_id}})",
           "refId": "A"
         }
       ],
-      "title": "🔥 Errors per Node (5m)",
+      "title": "🔥 Errors per Node",
       "type": "timeseries"
     },
     {
@@ -682,7 +682,7 @@
           },
           "expr": "nodered_messages_incoming_per_second{flow_id=~\"$flow\",node_type=~\"$node_type\"}",
           "interval": "",
-          "legendFormat": "{{flow_name}} / {{node_name}} [{{node_type}}] ({{node_id}}) - Incoming",
+          "legendFormat": "{{node_name}} [{{node_type}}] ({{node_id}}) - Incoming",
           "refId": "A"
         }
       ],
@@ -774,7 +774,7 @@
           },
           "expr": "nodered_messages_outgoing_per_second{flow_id=~\"$flow\",node_type=~\"$node_type\"}",
           "interval": "",
-          "legendFormat": "{{flow_name}} / {{node_name}} [{{node_type}}] ({{node_id}}) - Outgoing",
+          "legendFormat": "{{node_name}} [{{node_type}}] ({{node_id}}) - Outgoing",
           "refId": "A"
         }
       ],
@@ -872,7 +872,7 @@
           },
           "expr": "(rate(nodered_node_execution_time_seconds_sum{flow_id=~\"$flow\",node_type=~\"$node_type\"}[5m]) / rate(nodered_node_execution_time_seconds_count{flow_id=~\"$flow\",node_type=~\"$node_type\"}[5m])) * 1000",
           "interval": "",
-          "legendFormat": "{{flow_name}} / {{node_name}} [{{node_type}}] ({{node_id}}) - Avg",
+          "legendFormat": "{{node_name}} [{{node_type}}] ({{node_id}}) - Avg",
           "refId": "A"
         }
       ],
